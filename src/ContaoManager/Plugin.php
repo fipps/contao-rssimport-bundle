@@ -8,7 +8,7 @@
  *
  */
 
-namespace Fipps\RssImportBundle\ContaoManager;
+namespace Fipps\RssimportBundle\ContaoManager;
 
 use Contao\ManagerPlugin\Bundle\Config\BundleConfig;
 use Contao\ManagerPlugin\Bundle\BundlePluginInterface;
@@ -27,7 +27,7 @@ class Plugin implements BundlePluginInterface
     public function getBundles(ParserInterface $parser)
     {
         return [
-            BundleConfig::create('Fipps\RssImportBundle\FippsRssImportBundle')
+            BundleConfig::create('Fipps\RssimportBundle\FippsRssimportBundle')
                 ->setLoadAfter(['Contao\CoreBundle\ContaoCoreBundle'])
                 ->setReplace(['rssimport']),
         ];
