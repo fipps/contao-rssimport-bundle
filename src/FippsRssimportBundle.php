@@ -8,7 +8,7 @@
  *
  */
 
-namespace Fipps\RssImportBundle;
+namespace Fipps\RssimportBundle;
 
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
@@ -17,6 +17,6 @@ use Symfony\Component\HttpKernel\Bundle\Bundle;
  *
  * @author Arne Borchert
  */
-class FippsRssImportBundle extends Bundle
+class FippsRssimportBundle extends Bundle
 {
 }
