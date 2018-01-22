@@ -1,0 +1,47 @@
+{
+	"name":"fipps/contao-rssimport-bundle",
+	"description":"Contao 4 RSS Import Bundle",
+	"keywords":["contao","RSS", "Import", "bundle"],
+	"type":"contao-bundle",
+	"homepage":"https://gitlab.fipps.de/contao/rssimport-bundle",
+	"license":"LGPL-3.0+",
+	"authors":[
+		{
+			"name":"Arne Borchert",
+			"homepage":"http://www.fipps.de",
+			"role":"Developer"
+		}
+	],
+	"support":{
+		"issues":"https://gitlab.fipps.de/contao/rssimport-bundle/issues",
+		"source":"https://gitlab.fipps.de/contao/rssimport-bundle.git"
+	},
+	"require":{
+		"php": ">=5.6.0",
+		"contao/core-bundle": "~4.4"
+	},
+	"require-dev": {
+        "contao/manager-plugin": "^2.0"
+	},
+	"conflict": {
+		"contao/manager-plugin": "<2.0 || >=3.0",
+		"symfony/symfony": "3.2.7"
+	},
+	"autoload": {
+		"psr-4": {
+			"fipps\\rssimport\\": "src/"
+		},
+        "classmap": [
+            "src/Resources/contao/"
+		],
+		"exclude-from-classmap": [
+            "src/Resources/contao/config/",
+            "src/Resources/contao/dca/",
+            "src/Resources/contao/languages/",
+            "src/Resources/contao/templates/"
+		]
+  	},
+	"extra": {
+		"contao-manager-plugin": "fipps\\rssimport\\ContaoManager\\Plugin"
+	}
+}

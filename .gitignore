@@ -1,0 +1,40 @@
+# IDEs #
+########
+.buildpath
+.project
+.settings
+._*
+.~lock.*
+.loadpath
+.vimproject
+.metadata
+.settings/
+.build/
+.idea/
+nbproject/
+logs/
+cache/
+
+# OS generated files #
+######################
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+*.swp
+
+# Backup & temporary Files #
+############################
+*.bak
+*.bak.php
+*.tmp
+~*.*
+*~
+tmp/
+temp/
+
