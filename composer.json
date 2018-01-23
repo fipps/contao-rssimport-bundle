@@ -4,7 +4,7 @@
 	"keywords":["contao","RSS", "Import", "bundle"],
 	"type":"contao-bundle",
 	"homepage":"https://gitlab.fipps.de/contao4/rssimport-bundle",
-	"license":"LGPL-3.0+",
+	"license":"LGPL-3.0-or-later",
 	"authors":[
 		{
 			"name":"Arne Borchert",
