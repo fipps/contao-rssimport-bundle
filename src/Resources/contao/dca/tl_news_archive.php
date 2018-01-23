@@ -17,7 +17,7 @@ $this->import('BackendUser', 'User');
 
 // Table tl_news_archive
 $GLOBALS['TL_DCA']['tl_news_archive']['config']['ondelete_callback'][] = array(
-        'fipps\xRssImport\RssImport3',
+        'Fipps\RssimportBundle\RssImport3',
         'deleteAttachments'
 );
 

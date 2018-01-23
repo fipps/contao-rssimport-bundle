@@ -15,11 +15,11 @@
 
 // Table tl_news
 $GLOBALS['TL_DCA']['tl_news']['config']['ondelete_callback'][] = array(
-        'fipps\xRssImport\RssImport3',
+        'Fipps\RssimportBundle\RssImport3',
         'deleteAttachments'
 );
 $GLOBALS['TL_DCA']['tl_news']['config']['onload_callback'][] = array(
-        'fipps\xRssImport\RssImport3',
+        'Fipps\RssimportBundle\RssImport3',
         'importNewFeeds'
 );
 
