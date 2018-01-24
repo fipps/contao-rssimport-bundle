@@ -28,24 +28,9 @@ $GLOBALS['TL_DCA']['tl_news_archive']['palettes']['default'] = str_replace(
 
 // Selectors
 $GLOBALS['TL_DCA']['tl_news_archive']['palettes']['__selector__'][] = 'rssimp_imp';
-// $GLOBALS['TL_DCA']['tl_news_archive']['palettes']['__selector__'][] = 'rssimp_source';
 
 // Subpalettes
-$GLOBALS['TL_DCA']['tl_news_archive']['subpalettes']['rssimp_imp'] = '
-    rssimp_impurl,
-    rssimp_imgpath,
-    rssimp_size,
-    rssimp_imagemargin,
-    rssimp_fullsize,
-    rssimp_floating,
-    rssimp_published,
-    rssimp_teaserhtml,
-    rssimp_truncate,
-    rssimp_allowedTags,
-    rssimp_subtitlesrc,
-    rssimp_author,
-    rssimp_source,
-    rssimp_target';
+$GLOBALS['TL_DCA']['tl_news_archive']['subpalettes']['rssimp_imp'] = 'rssimp_impurl, rssimp_imgpath, rssimp_size, rssimp_imagemargin, rssimp_fullsize, rssimp_floating, rssimp_published, rssimp_teaserhtml, rssimp_truncate, rssimp_allowedTags, rssimp_subtitlesrc, rssimp_author, rssimp_source, rssimp_target';
 
 // Fields
 $tmpfields = array(
@@ -104,18 +89,7 @@ $tmpfields = array(
         'label'     => &$GLOBALS['TL_LANG']['tl_content']['imagemargin'],
         'exclude'   => true,
         'inputType' => 'trbl',
-        'options'   => array(
-            'px',
-            '%',
-            'em',
-            'rem',
-            'ex',
-            'pt',
-            'pc',
-            'in',
-            'cm',
-            'mm',
-        ),
+        'options'   => array('px', '%', 'em', 'rem', 'ex', 'pt', 'pc', 'in', 'cm', 'mm',),
         'eval'      => array(
             'includeBlankOption' => true,
             'tl_class'           => 'w50',
@@ -136,12 +110,7 @@ $tmpfields = array(
         'default'   => 'above',
         'exclude'   => true,
         'inputType' => 'radioTable',
-        'options'   => array(
-            'above',
-            'left',
-            'right',
-            'below',
-        ),
+        'options'   => array('above', 'left', 'right', 'below',),
         'eval'      => array(
             'cols'     => 4,
             'tl_class' => 'w50',
