@@ -1,0 +1,7 @@
+v4.0.1
+- Hinzufügen: LICENSE
+- Hinzufügen: CHANGELOG
+- Hinzufügen: README.md
+
+v4.0.0
+- Umstellung auf Contao 4.4 (Manager Edition)
