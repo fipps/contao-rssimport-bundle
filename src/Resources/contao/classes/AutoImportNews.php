@@ -1,17 +1,17 @@
 <?php
+/**
+ * Contao RSS Import Bundle
+ *
+ * @copyright 2011, 2014, 2018 agentur fipps e.K.
+ * @author    Arne Borchert
+ * @package   fipps\contao-rssimport-bundle
+ * @license   LGPL 3.0+
+ */
+
 namespace Fipps\RssimportBundle;
 
 use Contao\Backend;
-/**
- * xRssImport3
- *
- * Copyright (c) 2011, 2014 agentur fipps e.K
- *
- * @copyright 2011, 2014 agentur fipps e.K.
- * @author Arne Borchert
- * @package fipps\rssImport
- * @license LGPL
- */
+
 
 // Initialize Backend
 if (!defined('TL_MODE')) {
@@ -43,7 +43,7 @@ class AutoImportNews extends Backend
 
     public function run()
     {
-        $rssImport = new RssImport3();
+        $rssImport = new RssImport();
         $this->log('AutoImport NewsFeeds', 'AutoImportNews->run', TL_GENERAL);
         $rssImport->importAllNewsFeeds();
     }

@@ -1,15 +1,14 @@
 <?php
 /**
- * rssImport
+ * Contao RSS Import Bundle
  *
- * Copyright (c) 2011, 2014, 2015 agentur fipps e.K
- *
- * @copyright 2011, 2014, 2015 agentur fipps e.K.
- * @author Arne Borchert
- * @package fipps\rssImport
- * @license LGPL
+ * @copyright 2011, 2014, 2018 agentur fipps e.K.
+ * @author    Arne Borchert
+ * @package   fipps\contao-rssimport-bundle
+ * @license   LGPL 3.0+
  */
+
 $GLOBALS['TL_CRON']['hourly'][] = array(
-        'Fipps\RssimportBundle\AutoImportNews',
-        'run'
+    'Fipps\RssimportBundle\AutoImportNews',
+    'run',
 );
