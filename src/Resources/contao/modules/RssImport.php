@@ -1,21 +1,19 @@
 <?php
-
 /**
- * xRssImport3
+ * Contao RSS Import Bundle
  *
- * Copyright (c) 2011, 2014 agentur fipps e.K
- *
- * @copyright 2011, 2014 agentur fipps e.K.
- * @author Arne Borchert
- * @package fipps\rssImport
- * @license LGPL
+ * @copyright 2011, 2014, 2018 agentur fipps e.K.
+ * @author    Arne Borchert
+ * @package   fipps\contao-rssimport-bundle
+ * @license   LGPL 3.0+
  */
+
 namespace Fipps\RssimportBundle;
 
 /**
- * Class xRssImport3
+ * Class RssImport
  */
-class RssImport3 extends \Contao\Backend
+class RssImport extends \Contao\Backend
 {
 
     private $_iStatsItemsRead;
