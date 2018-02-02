@@ -1,15 +1,17 @@
 <?php
-
 /**
- * @copyright  Arne Borchert <http://www.fipps.de>
- * @author     Arne Borchert
- * @package    RSS-Import Bundle
- * @license    LGPL-3.0+
+ * Contao RSS Import Bundle
  *
+ * @copyright 2011, 2014, 2018 agentur fipps e.K.
+ * @author    Arne Borchert
+ * @package   fipps\contao-rssimport-bundle
+ * @license   LGPL 3.0+
  */
 
 namespace Fipps\RssimportBundle\ContaoManager;
 
+use Fipps\RssimportBundle\FippsRssimportBundle;
+use Contao\CoreBundle\ContaoCoreBundle;
 use Contao\ManagerPlugin\Bundle\Config\BundleConfig;
 use Contao\ManagerPlugin\Bundle\BundlePluginInterface;
 use Contao\ManagerPlugin\Bundle\Parser\ParserInterface;
@@ -27,9 +29,9 @@ class Plugin implements BundlePluginInterface
     public function getBundles(ParserInterface $parser)
     {
         return [
-            BundleConfig::create('Fipps\RssimportBundle\FippsRssimportBundle')
-                ->setLoadAfter(['Contao\CoreBundle\ContaoCoreBundle'])
-                ->setReplace(['rssimport']),
+            BundleConfig::create(FippsRssimportBundle::class)
+                ->setLoadAfter([ContaoCoreBundle::class])
+                ->setReplace(['fipps_rssimport'])
         ];
     }
 }
