@@ -19,7 +19,7 @@ use Contao\ManagerPlugin\Bundle\Parser\ParserInterface;
 /**
  * Plugin for the Contao Manager.
  *
- * @author Aren Borchert
+ * @author Arne Borchert
  */
 class Plugin implements BundlePluginInterface
 {
