@@ -126,7 +126,7 @@ $tmpfields = array(
         'inputType' => 'checkbox',
         'eval'      => array(
             'doNotCopy' => true,
-            'tl_class'  => 'long',
+            'tl_class'  => 'long clr',
         ),
         'sql'       => "char(1) NOT NULL default ''",
     ),

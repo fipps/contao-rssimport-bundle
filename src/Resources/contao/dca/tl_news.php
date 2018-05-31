@@ -29,3 +29,4 @@ $tmpfields = array(
 );
 
 $GLOBALS['TL_DCA']['tl_news']['fields'] = array_merge($GLOBALS['TL_DCA']['tl_news']['fields'], $tmpfields);
+
