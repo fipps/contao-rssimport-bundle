@@ -40,8 +40,6 @@ class FeedItemModel
 
     public $oImage;
 
-    public $oDownload;
-
     public $arrEnclosures;
 
     public $sComments;

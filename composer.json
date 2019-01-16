@@ -8,7 +8,7 @@
     "bundle"
   ],
   "type": "contao-bundle",
-  "homepage": "https://gitlab.fipps.de:8443/contao/contao4/rssimport-bundle",
+  "homepage": "https://gitlab.fipps.de/contao/contao4/rssimport-bundle",
   "license": "LGPL-3.0-or-later",
   "authors": [
     {
@@ -18,8 +18,8 @@
     }
   ],
   "support": {
-    "issues": "https://gitlab.fipps.de:8443/contao/contao4/rssimport-bundle/issues",
-    "source": "https://gitlab.fipps.de:8443/contao/contao4/rssimport-bundle/tree/master"
+    "issues": "https://gitlab.fipps.de/contao/contao4/rssimport-bundle/issues",
+    "source": "https://gitlab.fipps.de/contao/contao4/rssimport-bundle/tree/master"
   },
   "require": {
     "php": "^5.6|^7.0",
