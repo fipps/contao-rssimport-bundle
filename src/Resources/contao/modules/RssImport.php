@@ -26,7 +26,7 @@ class RssImport extends \Contao\Backend
 
     private $_sTable;
 
-    private $arrEnclosures;
+    private $_arrEnclosures;
 
     const TL_NEWS = 'tl_news';
 
@@ -95,15 +95,15 @@ class RssImport extends \Contao\Backend
 
         switch ($this->_sTable) {
             case self::TL_NEWS_ARCHIVE:
-                $sTable = 'tl_news';
+                $sTable    = 'tl_news';
                 $sIdColumn = 'pid';
                 break;
             case self::TL_NEWS:
-                $sTable = 'tl_news';
+                $sTable    = 'tl_news';
                 $sIdColumn = 'id';
                 break;
             default:
-                $sTable = false;
+                $sTable    = false;
                 $sIdColumn = false;
                 break;
         }
@@ -121,8 +121,8 @@ class RssImport extends \Contao\Backend
 
                 if (is_array($aRows)) {
                     foreach ($aRows as $aRow) {
-                        if (file_exists(TL_ROOT . '/' . $aRow['path']) && $this->_checkIfAttachmentIsUnused($aRow['id'], $aRow['uuid'], $sTable)) {
-                            unlink(TL_ROOT . '/' . $aRow['path']);
+                        if (file_exists(TL_ROOT.'/'.$aRow['path']) && $this->_checkIfAttachmentIsUnused($aRow['id'], $aRow['uuid'], $sTable)) {
+                            unlink(TL_ROOT.'/'.$aRow['path']);
                             \Dbafs::deleteResource($aRow['path']);
                         }
                     }
@@ -133,8 +133,9 @@ class RssImport extends \Contao\Backend
 
     private function _checkIfAttachmentIsUnused($id, $uuid, $sTable)
     {
-        $sql = "SELECT id FROM $sTable WHERE id != ? AND HEX(singleSRC) = ?";
+        $sql     = "SELECT id FROM $sTable WHERE id != ? AND HEX(singleSRC) = ?";
         $oResult = $this->Database->prepare($sql)->execute($id, bin2hex($uuid));
+
         return $oResult->numRows == 0;
     }
 
@@ -142,7 +143,7 @@ class RssImport extends \Contao\Backend
      * generate a unique alias
      *
      * @param string $sHeadline
-     * @param int $iId
+     * @param int    $iId
      * @return string
      */
     private function _generateNewAlias($sHeadline, $iId)
@@ -151,8 +152,9 @@ class RssImport extends \Contao\Backend
         // Check if alias already exists
         $oResult = $this->Database->prepare("SELECT id FROM $this->_sTable WHERE alias=? ")->execute($sAlias);
 
-        if ($oResult->numRows > 0)
-            $sAlias .= '-' . $iId;
+        if ($oResult->numRows > 0) {
+            $sAlias .= '-'.$iId;
+        }
 
         return $sAlias;
     }
@@ -177,17 +179,19 @@ class RssImport extends \Contao\Backend
     {
         // $sTable = ($this->_sTable == self::TL_NEWS) ? self::TL_NEWS_ARCHIVE : self::TL_CALENDAR;
         $sTable = self::TL_NEWS_ARCHIVE;
-        $sql = "SELECT $sTable.*, tl_files.path FROM $sTable";
-        $sql .= " LEFT JOIN tl_files ON rssimp_imgpath LIKE uuid";
-        $sql .= " WHERE rssimp_imp = ?";
+        $sql    = "SELECT $sTable.*, tl_files.path FROM $sTable";
+        $sql    .= " LEFT JOIN tl_files ON rssimp_imgpath LIKE uuid";
+        $sql    .= " WHERE rssimp_imp = ?";
 
         if (isset($sql)) {
             $oResult = $this->Database->prepare($sql)->execute(1);
             if ($oResult->numRows) {
                 $arRows = $oResult->fetchAllAssoc();
+
                 return $arRows;
             }
         }
+
         return null;
     }
 
@@ -197,135 +201,150 @@ class RssImport extends \Contao\Backend
      * @param array $aNewsArchiveRow
      * @return boolean
      */
-    private function _writeFeed($aRssImportRow)
+    private function _writeFeed($aNewsArchiveRow)
     {
-        if ($this->_sTable == self::TL_NEWS)
-            $sPartForLog = "Update News, Archive ID: " . $aRssImportRow['id'];
+        if ($this->_sTable == self::TL_NEWS) {
+            $sPartForLog = "Update News, Archive ID: ".$aNewsArchiveRow['id'];
+        }
 
-            // Url ist leer? => return
-        if (strlen(trim($aRssImportRow['rssimp_impurl'])) < 1) {
-            $this->log($sPartForLog . " - Url is empty!", 'RssImport _writefeed', TL_GENERAL);
+        // Url ist leer? => return
+        if (strlen(trim($aNewsArchiveRow['rssimp_impurl'])) < 1) {
+            $this->log($sPartForLog." - Url is empty!", 'RssImport _writefeed', TL_GENERAL);
+
             return false;
         }
         // initialisiere Werte für Statistik
         $this->_iStatsItemsRead = $this->_iStatsItemsInserted = $this->_iStatsItemsUpdated = 0;
         // lese den Feed
         $oFeed = new FeedChannelModel();
-        if (!$oFeed->getFeed($aRssImportRow['rssimp_impurl'])) {
-            $this->log($sPartForLog . "Could not read Url (" . $aRssImportRow['rssimp_impurl'] . ") " . $oFeed->sError, 'RssImport _writefeed', TL_ERROR);
+        if (!$oFeed->getFeed($aNewsArchiveRow['rssimp_impurl'])) {
+            $this->log($sPartForLog."Could not read Url (".$aNewsArchiveRow['rssimp_impurl'].") ".$oFeed->sError, 'RssImport _writefeed', TL_ERROR);
+
             return false; // Feed konnte nicht gelesen werden
         }
         $arSimplePieItems = $oFeed->arItems;
 
         // hole erlaubte tags
-        $sAllowedTags = $aRssImportRow['rssimp_allowedTags'];
+        $sAllowedTags = $aNewsArchiveRow['rssimp_allowedTags'];
 
         // Für alle Beiträge ...
         if ($arSimplePieItems) {
-            foreach ($arSimplePieItems as $oResultItem) {
-                $aTmpArr[] = $oResultItem;
+
+            /** @var FeedItemModel $oSimplePieItem */
+            foreach ($arSimplePieItems as $oSimplePieItem) {
+                $aTmpArr[]              = $oSimplePieItem;
                 $this->_iStatsItemsRead += 1;
 
                 // hole subtitle
-                if ($aRssImportRow['rssimp_subtitlesrc']) {
-                    switch ($aRssImportRow['rssimp_subtitlesrc']) {
+                if ($aNewsArchiveRow['rssimp_subtitlesrc']) {
+                    switch ($aNewsArchiveRow['rssimp_subtitlesrc']) {
                         case ('category'):
-                            if ($oResultItem->arCategoryLabels)
-                                $oResultItem->sSubtitle = implode(', ', $oResultItem->arCategoryLabels);
+                            if ($oSimplePieItem->arCategoryLabels) {
+                                $oSimplePieItem->sSubtitle = implode(', ', $oSimplePieItem->arCategoryLabels);
+                            }
                             break;
                         case ('contributor'):
-                            $oResultItem->sSubtitle = $oResultItem->sContributorName;
+                            $oSimplePieItem->sSubtitle = $oSimplePieItem->sContributorName;
                             break;
                         case ('rights'):
-                            $oResultItem->sSubtitle = $oResultItem->sCopyright;
+                            $oSimplePieItem->sSubtitle = $oSimplePieItem->sCopyright;
                             break;
                         default:
-                            $oResultItem->sSubtitle = '';
+                            $oSimplePieItem->sSubtitle = '';
                     }
                 }
 
                 // hole teaser
-                $teaser = $this->_notempty($oResultItem->sDescription);
+                $teaser = $this->_notempty($oSimplePieItem->sDescription);
+
                 // convert {space,t,n} to a single space
                 $teaser = preg_replace('/\s+/', ' ', substr($teaser, 0, 4096));
+
                 // entferne tags
-                if ($aRssImportRow['rssimp_teaserhtml'] < 1)
+                if ($aNewsArchiveRow['rssimp_teaserhtml'] < 1) {
                     $teaser = strip_tags(html_entity_decode($teaser, ENT_NOQUOTES, $GLOBALS['TL_CONFIG']['characterSet']));
-                else
+                } else {
                     $teaser = strip_tags(html_entity_decode($teaser, ENT_NOQUOTES, $GLOBALS['TL_CONFIG']['characterSet']), $sAllowedTags);
-                    // Truncate Teaser
-                if ($aRssImportRow['rssimp_truncate'])
-                    $teaser = substr($teaser, 0, $aRssImportRow['rssimp_truncate']) . '&hellip;';
-                $rssimp_source = ($aRssImportRow['rssimp_source'] != 'content') ? $aRssImportRow['rssimp_source'] : 'default';
+                }
+
+                // Truncate Teaser
+                if ($aNewsArchiveRow['rssimp_truncate']) {
+                    $teaser = substr($teaser, 0, $aNewsArchiveRow['rssimp_truncate']).'&hellip;';
+                }
+
+                $rssimp_source = ($aNewsArchiveRow['rssimp_source'] != 'content') ? $aNewsArchiveRow['rssimp_source'] : 'default';
 
                 if ($this->_sTable == self::TL_NEWS) {
                     // Prepare record for tl_news
-                    $aSet = array(
-                            // id => auto;
-                            'pid' => $this->_notempty($aRssImportRow['id']),
-                            'tstamp' => $this->_notempty($oResultItem->iUpdated),
-                            'headline' => $this->_notempty($oResultItem->sTitle),
-                            'alias' => '',
-                            'author' => $this->_notempty($aRssImportRow['rssimp_author']),
-                            'date' => $this->_notempty($oResultItem->iPublished),
-                            'time' => $this->_notempty($oResultItem->iPublished),
-                            'subheadline' => $this->_notempty($oResultItem->sSubtitle),
-                            'teaser' => $teaser,
-                            'singleSRC' => '',
-                            'addImage' => 0,
-                            'imagemargin' => $this->_notempty($aRssImportRow['rssimp_imagemargin']),
-                            'size' => $this->_notempty($aRssImportRow['rssimp_size']),
-                            'fullsize' => $this->_notempty($aRssImportRow['rssimp_fullsize']),
-                            'imageUrl' => $this->_notempty($oResultItem->oImage->sLink),
-                            'floating' => $this->_notempty($aRssImportRow['rssimp_floating']),
-                            'addEnclosure' => (count($oResultItem->arrEnclosures) > 0) ? true : false,
-                            'enclosure' => '',
-                            'source' => 'default',
-                            'url' => $this->_notempty($oResultItem->sLink), // Weiterleitungsziel
-                            'cssClass' => $this->_notempty($aRssImportRow['expertdefaults_cssclass']),
-                            'published' => $this->_notempty($aRssImportRow['rssimp_published']),
-                            'rssimp_guid' => $this->_notempty($oResultItem->sGuid),
-                            'rssimp_link' => $this->_notempty($oResultItem->sLink),
-                            'source' => $rssimp_source,
-                            'target' => $this->_notempty($aRssImportRow['rssimp_target'])
+                    $aSet                 = array(
+                        // id => auto;
+                        'pid'          => $this->_notempty($aNewsArchiveRow['id']),
+                        'tstamp'       => $this->_notempty($oSimplePieItem->iUpdated),
+                        'headline'     => $this->_notempty($oSimplePieItem->sTitle),
+                        'alias'        => '',
+                        'author'       => $this->_notempty($aNewsArchiveRow['rssimp_author']),
+                        'date'         => $this->_notempty($oSimplePieItem->iPublished),
+                        'time'         => $this->_notempty($oSimplePieItem->iPublished),
+                        'subheadline'  => $this->_notempty($oSimplePieItem->sSubtitle),
+                        'teaser'       => $teaser,
+                        'singleSRC'    => '',
+                        'addImage'     => 0,
+                        'imagemargin'  => $this->_notempty($aNewsArchiveRow['rssimp_imagemargin']),
+                        'size'         => $this->_notempty($aNewsArchiveRow['rssimp_size']),
+                        'fullsize'     => $this->_notempty($aNewsArchiveRow['rssimp_fullsize']),
+                        'imageUrl'     => $this->_notempty($oSimplePieItem->oImage->sLink),
+                        'floating'     => $this->_notempty($aNewsArchiveRow['rssimp_floating']),
+                        'enclosure'    => '',
+                        'source'       => 'default',
+                        'url'          => $this->_notempty($oSimplePieItem->sLink), // Weiterleitungsziel
+                        'cssClass'     => $this->_notempty($aNewsArchiveRow['expertdefaults_cssclass']),
+                        'published'    => $this->_notempty($aNewsArchiveRow['rssimp_published']),
+                        'rssimp_guid'  => $this->_notempty($oSimplePieItem->sGuid),
+                        'rssimp_link'  => $this->_notempty($oSimplePieItem->sLink),
+                        'source'       => $rssimp_source,
+                        'target'       => $this->_notempty($aNewsArchiveRow['rssimp_target']),
                     );
-                    $this->arrEnclosures = $oResultItem->arrEnclosures;
+
+                    $this->_arrEnclosures = $oSimplePieItem->arrEnclosures;
                 }
                 if (isset($aSet)) {
-                    $_sContent = strip_tags(html_entity_decode($oResultItem->sContent, ENT_NOQUOTES, $GLOBALS['TL_CONFIG']['characterSet']), $sAllowedTags);
-                    if ($aRssImportRow['rssimp_source'] == 'content')
+                    $_sContent = strip_tags(html_entity_decode($oSimplePieItem->sContent, ENT_NOQUOTES, $GLOBALS['TL_CONFIG']['characterSet']), $sAllowedTags);
+                    if ($aNewsArchiveRow['rssimp_source'] == 'content') {
                         $_aLink = array(
-                                'titleText' => $oResultItem->sTitle,
-                                'url' => $oResultItem->sLink,
-                                'linkTitle' => $GLOBALS['TL_LANG']['MSC']['more'],
-                                'target' => 1
+                            'titleText' => $oSimplePieItem->sTitle,
+                            'url'       => $oSimplePieItem->sLink,
+                            'linkTitle' => $GLOBALS['TL_LANG']['MSC']['more'],
+                            'target'    => 1,
                         );
+                    }
 
-                    $this->_writeSingleItem($aSet, $aRssImportRow, $_sContent, $_aLink);
-                }
-
-                else
+                    $this->_writeSingleItem($aSet, $aNewsArchiveRow, $_sContent, $_aLink);
+                } else {
                     return false;
+                }
             } // endforeach $arSimplePieItems
         }
 
         $sLog = "";
         $this->log(
-            $sPartForLog . ' ' . 'Rss/Atom-Items found:' . $this->_iStatsItemsRead . ' ' . 'new:' . $this->_iStatsItemsInserted . ' ' . 'updated:' . $this->_iStatsItemsUpdated . ' ' . 'Url:' .
-                 $aRssImportRow['rssimp_impurl'], 'Rssimport->_writefeed', TL_GENERAL);
+            $sPartForLog.' '.'Rss/Atom-Items found:'.$this->_iStatsItemsRead.' '.'new:'.$this->_iStatsItemsInserted.' '.'updated:'.$this->_iStatsItemsUpdated.' '.'Url:'.$aNewsArchiveRow['rssimp_impurl'],
+            'Rssimport->_writefeed',
+            TL_GENERAL
+        );
+
         return true;
     }
 
     /**
      * write single feed item to tl_news
      *
-     * @param array $aSet
-     * @param array $aNewsArchiveRow
+     * @param array  $aSet
+     * @param array  $aNewsArchiveRow
      * @param string $sContentLead
      * @param string $sContent
-     * @param array $aLink
+     * @param array  $aLink
      */
-    private function _writeSingleItem($aSet, $aRssImportRow, $sContent = NULL, $aLink = NULL)
+    private function _writeSingleItem($aSet, $aRssImportRow, $sContent = null, $aLink = null)
     {
         // Lese parent id
         $iPid = $aRssImportRow['id'];
@@ -342,9 +361,7 @@ class RssImport extends \Contao\Backend
             // Beitrag existiert noch nicht => sql insert
             $this->_iStatsItemsInserted += 1;
             // neuen Beitrag einfuegen
-            $oResult = $this->Database->prepare("INSERT INTO $this->_sTable %s")
-                ->set($aSet)
-                ->execute();
+            $oResult = $this->Database->prepare("INSERT INTO $this->_sTable %s")->set($aSet)->execute();
             $iNewsId = $oResult->insertId; // hole last_insert_id
 
             // Alias generieren
@@ -356,40 +373,34 @@ class RssImport extends \Contao\Backend
             $aSet = $this->_makeLocal($aSet, $iNewsId, $aRssImportRow);
 
             // update tl_news
-            $this->Database->prepare("UPDATE $this->_sTable %s WHERE id=? ")
-                ->set($aSet)
-                ->execute($iNewsId);
+            $this->Database->prepare("UPDATE $this->_sTable %s WHERE id=? ")->set($aSet)->execute($iNewsId);
 
             // Content Element generieren, falls vorhanden
             if (isset($sContent) && $sContent != '') {
                 $_aContent = array(
-                        'pid' => $iNewsId,
-                        'ptable' => $this->_sTable,
-                        'sorting' => 128,
-                        'tstamp' => $aSet['tstamp'],
-                        'type' => 'text',
-                        'text' => $sContent
+                    'pid'     => $iNewsId,
+                    'ptable'  => $this->_sTable,
+                    'sorting' => 128,
+                    'tstamp'  => $aSet['tstamp'],
+                    'type'    => 'text',
+                    'text'    => $sContent,
                 );
-                $this->Database->prepare("INSERT INTO tl_content %s")
-                    ->set($_aContent)
-                    ->execute();
+                $this->Database->prepare("INSERT INTO tl_content %s")->set($_aContent)->execute();
             }
             if (is_array($aLink)) {
-                $aLink['pid'] = $iNewsId;
-                $aLink['ptable'] = $this->_sTable;
+                $aLink['pid']     = $iNewsId;
+                $aLink['ptable']  = $this->_sTable;
                 $aLink['sorting'] = 256;
-                $aLink['tstamp'] = $aSet['tstamp'];
-                $aLink['type'] = 'hyperlink';
-                $this->Database->prepare("INSERT INTO tl_content %s")
-                    ->set($aLink)
-                    ->execute();
+                $aLink['tstamp']  = $aSet['tstamp'];
+                $aLink['type']    = 'hyperlink';
+                $this->Database->prepare("INSERT INTO tl_content %s")->set($aLink)->execute();
             }
         } else {
             // Beitrag existiert, ist aber aktueller => sql update
-            $oRow = $oResult->fetchAssoc(); // lies ersten Datensatz
+            $oRow    = $oResult->fetchAssoc(); // lies ersten Datensatz
             $iNewsId = $oRow['id']; // lies id (DS mit selber guid wie Beitrag)
             $iTlDate = ($oRow['tstamp'] > $oRow['date']) ? $oRow['tstamp'] : $oRow['date']; // lies
-                                                                                            // update-Datum
+            // update-Datum
             if ($iTlDate < $iItemDate) {
                 // Beitrag ist aktueller?
                 $this->_iStatsItemsUpdated += 1;
@@ -407,24 +418,20 @@ class RssImport extends \Contao\Backend
                 $aSet = $this->_makeLocal($aSet, $iNewsId, $aRssImportRow);
 
                 // update ausfuehren
-                $this->Database->prepare("UPDATE $this->_sTable %s WHERE id=? ")
-                    ->set($aSet)
-                    ->execute($iNewsId);
+                $this->Database->prepare("UPDATE $this->_sTable %s WHERE id=? ")->set($aSet)->execute($iNewsId);
 
                 // Content Element aktualisieren
                 if (isset($sContent) && $sContent != '') {
                     $_aContent = array(
-                            'pid' => $iNewsId,
-                            'ptable' => $this->_sTable,
-                            'sorting' => 128,
-                            'tstamp' => $aSet['tstamp'],
-                            'type' => 'text',
-                            'text' => $sContent
+                        'pid'     => $iNewsId,
+                        'ptable'  => $this->_sTable,
+                        'sorting' => 128,
+                        'tstamp'  => $aSet['tstamp'],
+                        'type'    => 'text',
+                        'text'    => $sContent,
                     );
                     $this->Database->prepare("DELETE FROM tl_content WHERE ptable = '?' AND pid = ?")->execute($this->_sTable, $iNewsId);
-                    $this->Database->prepare("INSERT INTO tl_content %s")
-                        ->set($_aContent)
-                        ->execute();
+                    $this->Database->prepare("INSERT INTO tl_content %s")->set($_aContent)->execute();
                 }
             }
         }
@@ -435,39 +442,39 @@ class RssImport extends \Contao\Backend
      * of tl_news)
      *
      * @param array $aSet
-     * @param int $iItemId
+     * @param int   $iItemId
      * @param array $aArchiveRow
      * @return array
      */
-    private function _makeLocal(&$aSet, $iItemId, $aArchiveRow)
+    private function _makeLocal($aSet, $iItemId, $aArchiveRow)
     {
 
-        // Add Enclosures
-        if ($aSet['addEnclosure']) {
-            $addEnclosure = false;
-            foreach ($this->arrEnclosures as $oEnclosure) {
-                $enclosureUrl = $oEnclosure->sLink;
-                if ($encUUID = $this->_storeLocal($enclosureUrl, $aArchiveRow['path'], $iItemId)) {
-                    $arrEncUUIDs[] = $encUUID;
-                    $addEnclosure = true;
+        // Image
+        if ($aSet['imageUrl'] != '') {
+            $uuid = $this->_storeLocal($aSet['imageUrl'], $aArchiveRow['path'], $iItemId);
+            $aSet['singleSRC'] = $uuid;
+            $aSet['addImage'] = 1;
+        }
 
-                    // Add Image
-                    if (strpos(strtolower($oEnclosure->sType), 'image') !== false) {
-                        $aSet['singleSRC'] = $encUUID;
-                        $aSet['addImage'] = 1;
-                        $aSet['caption'] = $oEnclosure->sTitle;
-                        $aSet['alt'] = $oEnclosure->sDescription;
-                    }
+        // Anlagen
+            $addEnclosure = false;
+            foreach ($this->_arrEnclosures as $oEnclosure) {
+                $enclosureUrl = $oEnclosure->sLink;
+                if ($enclosureUrl == $aSet['imageUrl']) {
+                    $arrEncUUIDs[] = $uuid;
+                    $addEnclosure  = true;
+                } elseif ($encUUID = $this->_storeLocal($enclosureUrl, $aArchiveRow['path'], $iItemId)) {
+                    $arrEncUUIDs[] = $encUUID;
+                    $addEnclosure  = true;
                 } else {
-                    $this->log('Warning, cannot make local copy of file(' . $enclosureUrl . ') reason: ' . $this->_sMakeLocalErrorWarning, 'RssImport->_makelocal', TL_ERROR);
+                    $this->log('Warning, cannot make local copy of file('.$enclosureUrl.') reason: '.$this->_sMakeLocalErrorWarning, 'RssImport->_makelocal', TL_ERROR);
                 }
             }
 
-            $aSet['addEnclosure'] = $addEnclosure;
-        }
-        if ($addEnclosure) {
-            $aSet['enclosure'] = serialize($arrEncUUIDs);
-        }
+            if ($addEnclosure) {
+                $aSet['enclosure'] = serialize($arrEncUUIDs);
+                $aSet['addEnclosure'] = 1;
+            }
 
         return $aSet;
     }
@@ -477,7 +484,7 @@ class RssImport extends \Contao\Backend
      *
      * @param string $sExtUrl
      * @param string $sLocalPath
-     * @param int $iId
+     * @param int    $iId
      * @return string
      */
     private function _storeLocal($sExtUrl, $sLocalPath, $iId)
@@ -489,56 +496,64 @@ class RssImport extends \Contao\Backend
         $sAllowedSuffixes = $GLOBALS['TL_CONFIG']['allowedDownload'];
 
         if (strlen($sExtUrl) == 0) // Leerstring als ext. URL ist sinnlos
+        {
             $this->_sMakeLocalErrorWarning .= ' empty URL not allowed';
+        }
 
         if (strlen($sLocalPath) < 2) // dulde keinen Leerstring als Basispfad
+        {
             $this->_sMakeLocalErrorWarning .= ' empty basepath for downloads not allowed';
+        }
 
-            // setze lokalen Dateinamen: sLocalPath + filename + _ + id + extension
-        $arInfo = pathinfo($sExtUrl);
-        $arExtension = explode('?',$arInfo['extension']);
+        // setze lokalen Dateinamen: sLocalPath + filename + _ + id + extension
+        $arInfo              = pathinfo($sExtUrl);
+        $arExtension         = explode('?', $arInfo['extension']);
         $arInfo['extension'] = strtolower($arExtension[0]); // hole suffix;
-        $sFilename = standardize(basename($sExtUrl, '.' . $arInfo['extension'])); // hole dateinamen
-                                                                                  // (ohne suffix)
-                                                                                  // $sLocalFilename = $sFilename . '_' . $iId . '.' .
-                                                                                  // $arInfo['extension'];
-        $sLocalfile = $sLocalPath . '/' . $sFilename . '_' . $iId . '.' . $arInfo['extension'];
+        $sFilename           = standardize(basename($sExtUrl, '.'.$arInfo['extension'])); // hole dateinamen
+        // (ohne suffix)
+        // $sLocalFilename = $sFilename . '_' . $iId . '.' .
+        // $arInfo['extension'];
+        $sLocalfile = $sLocalPath.'/'.$sFilename.'_'.$iId.'.'.$arInfo['extension'];
 
-        if (!in_array($arInfo['extension'], trimsplit(',', strtolower($sAllowedSuffixes))))
+        if (!in_array($arInfo['extension'], trimsplit(',', strtolower($sAllowedSuffixes)))) {
             $this->_sMakeLocalErrorWarning .= ' Suffix not supported ';
+        }
 
-//         if (strpos($sExtUrl, '?') !== false)
-//             $this->_sMakeLocalErrorWarning .= ' special char in url not allowed (' . $sExtUrl . ')';
+        //         if (strpos($sExtUrl, '?') !== false)
+        //             $this->_sMakeLocalErrorWarning .= ' special char in url not allowed (' . $sExtUrl . ')';
 
-        if (file_exists(TL_ROOT . '/' . $sLocalfile))
+        if (file_exists(TL_ROOT.'/'.$sLocalfile)) {
             $this->_sMakeLocalErrorWarning .= ' output file alrady exists ';
+        }
 
-        if (strlen($this->_sMakeLocalErrorWarning) != 0) {
-            return NULL; // Abbruch
+        if (strlen($this->_sMakeLocalErrorWarning) > 0) {
+            return null; // Abbruch
         }
 
         // read
         try {
-            $sData = @file_get_contents($sExtUrl);
-        }
-        catch (Exception $oException) {
-            $this->_sMakeLocalErrorWarning .= ' could not read from url(' . $oException->getMessage() . ')';
-            return NULL; // Abbruch
+            $url = $arInfo['dirname'].'/'.urlencode($arInfo['basename']);
+            $sData = file_get_contents($url);
+        } catch (Exception $oException) {
+            $this->_sMakeLocalErrorWarning .= ' could not read from url('.$oException->getMessage().')';
+
+            return null; // Abbruch
         }
 
         if (strlen($sData) <= 0) {
-            $this->_sMakeLocalErrorWarning .= ' no file data(' . $sExtUrl . ')';
-            return NULL; // Abbruch
+            $this->_sMakeLocalErrorWarning .= ' no file data('.$sExtUrl.')';
+
+            return null; // Abbruch
         }
 
         // write
         try {
-            file_put_contents(TL_ROOT . '/' . $sLocalfile, $sData);
+            file_put_contents(TL_ROOT.'/'.$sLocalfile, $sData);
             $objModel = \Dbafs::addResource($sLocalfile);
-        }
-        catch (Exception $oException) {
-            $this->_sMakeLocalErrorWarning .= ' could not write file(' . $oException->getMessage() . ')';
-            return NULL; // Abbruch
+        } catch (Exception $oException) {
+            $this->_sMakeLocalErrorWarning .= ' could not write file('.$oException->getMessage().')';
+
+            return null; // Abbruch
         }
 
         return $objModel->uuid; // Erfolg
