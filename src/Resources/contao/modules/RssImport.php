@@ -254,55 +254,55 @@ class RssImport extends \Contao\Backend
                     }
                 }
 
-                // hole teaser
+                // get teaser
                 $teaser = $this->_notempty($oSimplePieItem->sDescription);
-
                 // convert {space,t,n} to a single space
-                $teaser = preg_replace('/\s+/', ' ', substr($teaser, 0, 4096));
+                $teaser = preg_replace('/\s+/', ' ', $teaser);
 
-                // entferne tags
+                // strip tags
                 if ($aNewsArchiveRow['rssimp_teaserhtml'] < 1) {
                     $teaser = strip_tags(html_entity_decode($teaser, ENT_NOQUOTES, $GLOBALS['TL_CONFIG']['characterSet']));
+                    // truncate after whole word if html is not allowed
+                    if ($aNewsArchiveRow['rssimp_truncate'] > 0 && strlen($teaser) > $aNewsArchiveRow['rssimp_truncate']) {
+                        $teaser = wordwrap($teaser, $aNewsArchiveRow['rssimp_truncate'], '#|#');
+                        $pos = strpos($teaser, '#|#');
+                        $teaser = substr($teaser, 0, $pos).'&hellip;';
+                    }
                 } else {
                     $teaser = strip_tags(html_entity_decode($teaser, ENT_NOQUOTES, $GLOBALS['TL_CONFIG']['characterSet']), $sAllowedTags);
-                }
-
-                // Truncate Teaser
-                if ($aNewsArchiveRow['rssimp_truncate']) {
-                    $teaser = substr($teaser, 0, $aNewsArchiveRow['rssimp_truncate']).'&hellip;';
                 }
 
                 $rssimp_source = ($aNewsArchiveRow['rssimp_source'] != 'content') ? $aNewsArchiveRow['rssimp_source'] : 'default';
 
                 if ($this->_sTable == self::TL_NEWS) {
                     // Prepare record for tl_news
-                    $aSet                 = array(
+                    $aSet = array(
                         // id => auto;
-                        'pid'          => $this->_notempty($aNewsArchiveRow['id']),
-                        'tstamp'       => $this->_notempty($oSimplePieItem->iUpdated),
-                        'headline'     => $this->_notempty($oSimplePieItem->sTitle),
-                        'alias'        => '',
-                        'author'       => $this->_notempty($aNewsArchiveRow['rssimp_author']),
-                        'date'         => $this->_notempty($oSimplePieItem->iPublished),
-                        'time'         => $this->_notempty($oSimplePieItem->iPublished),
-                        'subheadline'  => $this->_notempty($oSimplePieItem->sSubtitle),
-                        'teaser'       => $teaser,
-                        'singleSRC'    => '',
-                        'addImage'     => 0,
-                        'imagemargin'  => $this->_notempty($aNewsArchiveRow['rssimp_imagemargin']),
-                        'size'         => $this->_notempty($aNewsArchiveRow['rssimp_size']),
-                        'fullsize'     => $this->_notempty($aNewsArchiveRow['rssimp_fullsize']),
-                        'imageUrl'     => $this->_notempty($oSimplePieItem->oImage->sLink),
-                        'floating'     => $this->_notempty($aNewsArchiveRow['rssimp_floating']),
-                        'enclosure'    => '',
-                        'source'       => 'default',
-                        'url'          => $this->_notempty($oSimplePieItem->sLink), // Weiterleitungsziel
-                        'cssClass'     => $this->_notempty($aNewsArchiveRow['expertdefaults_cssclass']),
-                        'published'    => $this->_notempty($aNewsArchiveRow['rssimp_published']),
-                        'rssimp_guid'  => $this->_notempty($oSimplePieItem->sGuid),
-                        'rssimp_link'  => $this->_notempty($oSimplePieItem->sLink),
-                        'source'       => $rssimp_source,
-                        'target'       => $this->_notempty($aNewsArchiveRow['rssimp_target']),
+                        'pid'         => $this->_notempty($aNewsArchiveRow['id']),
+                        'tstamp'      => $this->_notempty($oSimplePieItem->iUpdated),
+                        'headline'    => $this->_notempty($oSimplePieItem->sTitle),
+                        'alias'       => '',
+                        'author'      => $this->_notempty($aNewsArchiveRow['rssimp_author']),
+                        'date'        => $this->_notempty($oSimplePieItem->iPublished),
+                        'time'        => $this->_notempty($oSimplePieItem->iPublished),
+                        'subheadline' => $this->_notempty($oSimplePieItem->sSubtitle),
+                        'teaser'      => $teaser,
+                        'singleSRC'   => '',
+                        'addImage'    => 0,
+                        'imagemargin' => $this->_notempty($aNewsArchiveRow['rssimp_imagemargin']),
+                        'size'        => $this->_notempty($aNewsArchiveRow['rssimp_size']),
+                        'fullsize'    => $this->_notempty($aNewsArchiveRow['rssimp_fullsize']),
+                        'imageUrl'    => $this->_notempty($oSimplePieItem->oImage->sLink),
+                        'floating'    => $this->_notempty($aNewsArchiveRow['rssimp_floating']),
+                        'enclosure'   => '',
+                        'source'      => 'default',
+                        'url'         => $this->_notempty($oSimplePieItem->sLink), // Weiterleitungsziel
+                        'cssClass'    => $this->_notempty($aNewsArchiveRow['expertdefaults_cssclass']),
+                        'published'   => $this->_notempty($aNewsArchiveRow['rssimp_published']),
+                        'rssimp_guid' => $this->_notempty($oSimplePieItem->sGuid),
+                        'rssimp_link' => $this->_notempty($oSimplePieItem->sLink),
+                        'source'      => $rssimp_source,
+                        'target'      => $this->_notempty($aNewsArchiveRow['rssimp_target']),
                     );
 
                     $this->_arrEnclosures = $oSimplePieItem->arrEnclosures;
@@ -451,30 +451,30 @@ class RssImport extends \Contao\Backend
 
         // Image
         if ($aSet['imageUrl'] != '') {
-            $uuid = $this->_storeLocal($aSet['imageUrl'], $aArchiveRow['path'], $iItemId);
+            $uuid              = $this->_storeLocal($aSet['imageUrl'], $aArchiveRow['path'], $iItemId);
             $aSet['singleSRC'] = $uuid;
-            $aSet['addImage'] = 1;
+            $aSet['addImage']  = 1;
         }
 
         // Anlagen
-            $addEnclosure = false;
-            foreach ($this->_arrEnclosures as $oEnclosure) {
-                $enclosureUrl = $oEnclosure->sLink;
-                if ($enclosureUrl == $aSet['imageUrl']) {
-                    $arrEncUUIDs[] = $uuid;
-                    $addEnclosure  = true;
-                } elseif ($encUUID = $this->_storeLocal($enclosureUrl, $aArchiveRow['path'], $iItemId)) {
-                    $arrEncUUIDs[] = $encUUID;
-                    $addEnclosure  = true;
-                } else {
-                    $this->log('Warning, cannot make local copy of file('.$enclosureUrl.') reason: '.$this->_sMakeLocalErrorWarning, 'RssImport->_makelocal', TL_ERROR);
-                }
+        $addEnclosure = false;
+        foreach ($this->_arrEnclosures as $oEnclosure) {
+            $enclosureUrl = $oEnclosure->sLink;
+            if ($enclosureUrl == $aSet['imageUrl']) {
+                $arrEncUUIDs[] = $uuid;
+                $addEnclosure  = true;
+            } else if ($encUUID = $this->_storeLocal($enclosureUrl, $aArchiveRow['path'], $iItemId)) {
+                $arrEncUUIDs[] = $encUUID;
+                $addEnclosure  = true;
+            } else {
+                $this->log('Warning, cannot make local copy of file('.$enclosureUrl.') reason: '.$this->_sMakeLocalErrorWarning, 'RssImport->_makelocal', TL_ERROR);
             }
+        }
 
-            if ($addEnclosure) {
-                $aSet['enclosure'] = serialize($arrEncUUIDs);
-                $aSet['addEnclosure'] = 1;
-            }
+        if ($addEnclosure) {
+            $aSet['enclosure']    = serialize($arrEncUUIDs);
+            $aSet['addEnclosure'] = 1;
+        }
 
         return $aSet;
     }
@@ -532,7 +532,7 @@ class RssImport extends \Contao\Backend
 
         // read
         try {
-            $url = $arInfo['dirname'].'/'.urlencode($arInfo['basename']);
+            $url   = $arInfo['dirname'].'/'.urlencode($arInfo['basename']);
             $sData = file_get_contents($url);
         } catch (Exception $oException) {
             $this->_sMakeLocalErrorWarning .= ' could not read from url('.$oException->getMessage().')';
