@@ -18,8 +18,7 @@
     }
   ],
   "support": {
-    "issues": "https://gitlab.fipps.de/contao/contao4/rssimport-bundle/issues",
-    "source": "https://gitlab.fipps.de/contao/contao4/rssimport-bundle/tree/master"
+    "issues": "https://gitlab.fipps.de/contao/contao4/rssimport-bundle/issues"
   },
   "require": {
     "php": "^5.6|^7.0",
