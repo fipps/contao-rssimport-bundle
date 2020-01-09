@@ -96,8 +96,10 @@ class FeedChannelModel
             $oRssFeedItem->sGuid = $arSimplePieItems[$i]->get_id();
 
             $arCategories = $arSimplePieItems[$i]->get_categories();
-            for ($j = 0; $j < count($arCategories); $j++) {
-                $oRssFeedItem->arCategoryLabels[$j] = $arCategories[$j]->get_label();
+            if (null !== $arCategories) {
+                for ($j = 0; $j < count($arCategories); $j++) {
+                    $oRssFeedItem->arCategoryLabels[$j] = $arCategories[$j]->get_label();
+                }
             }
 
             $oRssFeedItem->sCopyright = $arSimplePieItems[$i]->get_copyright();
