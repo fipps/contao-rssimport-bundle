@@ -19,14 +19,5 @@ $GLOBALS['TL_DCA']['tl_news']['config']['onload_callback'][]   = array(
 );
 
 // Fields
-$tmpfields = array(
-    'rssimp_guid' => array(
-        'sql' => "mediumtext NULL",
-    ),
-    'rssimp_link' => array(
-        'sql' => "mediumtext NULL",
-    ),
-);
-
-$GLOBALS['TL_DCA']['tl_news']['fields'] = array_merge($GLOBALS['TL_DCA']['tl_news']['fields'], $tmpfields);
-
+$GLOBALS['TL_DCA']['tl_news']['fields']['rssimp_guid'] = array('sql' => "mediumtext NULL");
+$GLOBALS['TL_DCA']['tl_news']['fields']['rssimp_link'] = array('sql' => "mediumtext NULL");
