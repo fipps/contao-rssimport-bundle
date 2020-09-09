@@ -1,8 +1,6 @@
-4.1.5
+4.1.4/4.1.5/4.1.6
+- fix: LoadAfter
 - fix: dca
-
-4.1.4
-- fix: LoadAfter ContaoNewsBundle
 
 v4.1.3
 - fix: warning in FeedChannelModel when no category is returned 
