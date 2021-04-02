@@ -132,7 +132,7 @@ class FeedChannelModel
             $arEnclosures    = $arSimplePieItems[$i]->get_enclosures();
             $aTempEnclosures = array();
 
-            // Process non-standard enclosures
+            // Process non-standard enclosures (see #4)
             if ($enclosure = $arSimplePieItems[$i]->get_item_tags(SIMPLEPIE_NAMESPACE_ATOM_10, 'enclosure') && !empty($enclosure[0]['attribs']['']['url'])) {
                 $url = $arSimplePieItems[$i]->sanitize($enclosure[0]['attribs']['']['url'], SIMPLEPIE_CONSTRUCT_IRI, $arSimplePieItems[$i]->get_base($enclosure[0]));
 
