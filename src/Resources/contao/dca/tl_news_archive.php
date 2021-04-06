@@ -82,6 +82,7 @@ $GLOBALS['TL_DCA']['tl_news_archive']['fields']['rssimp_size'] = array(
         'nospace'    => true,
         'helpwizard' => true,
         'tl_class'   => 'w50',
+        'includeBlankOption' => true,
     ),
     'sql'       => "varchar(64) NOT NULL default ''",
 );
