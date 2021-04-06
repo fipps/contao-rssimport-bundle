@@ -1,3 +1,6 @@
+4.1.7
+- bugfix: enclosures in atom-feeds (Thanks to fritzmg)
+
 4.1.4/4.1.5/4.1.6
 - fix: LoadAfter
 - fix: dca
