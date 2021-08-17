@@ -82,8 +82,8 @@ class FeedChannelModel
             $oRssFeedItem->sLink  = $arSimplePieItems[$i]->get_link();
             $oRssFeedItem->sTitle = $arSimplePieItems[$i]->get_title();
 
-            // $oRssFeedItem->sDescription = $arSimplePieItems[$i]->get_description();
-            // $oRssFeedItem->sContent = $arSimplePieItems[$i]->get_content();
+            $oRssFeedItem->sDescription = $arSimplePieItems[$i]->get_description();
+            $oRssFeedItem->sContent = $arSimplePieItems[$i]->get_content(true);
             // Issue #25: CDATA bei description oder content (https://gitlab.fipps.de/contao/rssImport/issues/25)
             // Dank an Micha Heigl
             if (($arDescr = $arSimplePieItems[$i]->get_item_tags(SIMPLEPIE_NAMESPACE_RSS_20, 'description')) || ($arDescr = $arSimplePieItems[$i]->get_item_tags(SIMPLEPIE_NAMESPACE_ATOM_10, 'description'))) {
@@ -95,9 +95,10 @@ class FeedChannelModel
 
             $oRssFeedItem->sGuid = $arSimplePieItems[$i]->get_id();
 
-            $arCategories = $arSimplePieItems[$i]->get_categories();
-            for ($j = 0; $j < count($arCategories); $j++) {
-                $oRssFeedItem->arCategoryLabels[$j] = $arCategories[$j]->get_label();
+            if ($arCategories = $arSimplePieItems[$i]->get_categories()) {
+                for ($j = 0; $j < count($arCategories); $j++) {
+                    $oRssFeedItem->arCategoryLabels[$j] = $arCategories[$j]->get_label();
+                }
             }
 
             $oRssFeedItem->sCopyright = $arSimplePieItems[$i]->get_copyright();
