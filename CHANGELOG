@@ -1,3 +1,6 @@
+v4.1.8
+- Fix: <content:encoded> is not imported
+
 4.1.7
 - bugfix: enclosures in atom-feeds (Thanks to fritzmg)
 
