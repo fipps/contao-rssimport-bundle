@@ -82,8 +82,8 @@ class FeedChannelModel
             $oRssFeedItem->sLink  = $arSimplePieItems[$i]->get_link();
             $oRssFeedItem->sTitle = $arSimplePieItems[$i]->get_title();
 
-            $oRssFeedItem->sDescription = $arSimplePieItems[$i]->get_description();
-            $oRssFeedItem->sContent = $arSimplePieItems[$i]->get_content(true);
+            // $oRssFeedItem->sDescription = $arSimplePieItems[$i]->get_description();
+            // $oRssFeedItem->sContent = $arSimplePieItems[$i]->get_content();
             // Issue #25: CDATA bei description oder content (https://gitlab.fipps.de/contao/rssImport/issues/25)
             // Dank an Micha Heigl
             if (($arDescr = $arSimplePieItems[$i]->get_item_tags(SIMPLEPIE_NAMESPACE_RSS_20, 'description')) || ($arDescr = $arSimplePieItems[$i]->get_item_tags(SIMPLEPIE_NAMESPACE_ATOM_10, 'description'))) {
@@ -95,7 +95,8 @@ class FeedChannelModel
 
             $oRssFeedItem->sGuid = $arSimplePieItems[$i]->get_id();
 
-            if ($arCategories = $arSimplePieItems[$i]->get_categories()) {
+            $arCategories = $arSimplePieItems[$i]->get_categories();
+            if (null !== $arCategories) {
                 for ($j = 0; $j < count($arCategories); $j++) {
                     $oRssFeedItem->arCategoryLabels[$j] = $arCategories[$j]->get_label();
                 }
@@ -130,6 +131,21 @@ class FeedChannelModel
             // Add enclosure
             $arEnclosures    = $arSimplePieItems[$i]->get_enclosures();
             $aTempEnclosures = array();
+
+            // Process non-standard enclosures (see #4)
+            if (($enclosure = $arSimplePieItems[$i]->get_item_tags(SIMPLEPIE_NAMESPACE_ATOM_10, 'enclosure')) && !empty($enclosure[0]['attribs']['']['url'])) {
+                $url = $arSimplePieItems[$i]->sanitize($enclosure[0]['attribs']['']['url'], SIMPLEPIE_CONSTRUCT_IRI, $arSimplePieItems[$i]->get_base($enclosure[0]));
+
+                if (!empty($enclosure[0]['attribs']['']['type'])) {
+                    $type = $arSimplePieItems[$i]->sanitize($enclosure[0]['attribs']['']['type'], SIMPLEPIE_CONSTRUCT_TEXT);
+                }
+
+                if (!empty($enclosure[0]['attribs']['']['length'])) {
+                    $length = ceil($enclosure[0]['attribs']['']['length']);
+                }
+
+                $arEnclosures[] = new \SimplePie_Enclosure($url, $type, $length);
+            }
 
             $imgAlreadySet = false;
             foreach ($arEnclosures as $oEnclosure) {

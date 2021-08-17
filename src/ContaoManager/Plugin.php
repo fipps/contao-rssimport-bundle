@@ -10,9 +10,9 @@
 
 namespace Fipps\RssimportBundle\ContaoManager;
 
+use Contao\CoreBundle\ContaoCoreBundle;
 use Contao\NewsBundle\ContaoNewsBundle;
 use Fipps\RssimportBundle\FippsRssimportBundle;
-use Contao\CoreBundle\ContaoCoreBundle;
 use Contao\ManagerPlugin\Bundle\Config\BundleConfig;
 use Contao\ManagerPlugin\Bundle\BundlePluginInterface;
 use Contao\ManagerPlugin\Bundle\Parser\ParserInterface;
@@ -31,7 +31,7 @@ class Plugin implements BundlePluginInterface
     {
         return [
             BundleConfig::create(FippsRssimportBundle::class)
-                ->setLoadAfter([ContaoCoreBundle::class, ContaoNewsBundle::class])
+                ->setLoadAfter([ContaoCoreBundle::class,ContaoNewsBundle::class])
                 ->setReplace(['fipps_rssimport'])
         ];
     }

@@ -1,5 +1,15 @@
-v4.1.3
+v4.1.8
 - Fix: <content:encoded> is not imported
+
+4.1.7
+- bugfix: enclosures in atom-feeds (Thanks to fritzmg)
+
+4.1.4/4.1.5/4.1.6
+- fix: LoadAfter
+- fix: dca
+
+v4.1.3
+- fix: warning in FeedChannelModel when no category is returned 
 
 v4.1.2
 - change: composer.json
