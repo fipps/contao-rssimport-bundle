@@ -178,7 +178,7 @@ $GLOBALS['TL_DCA']['tl_news_archive']['fields']['rssimp_allowedTags'] = array(
         'mandatory'    => false,
         'tl_class'     => 'long',
     ),
-    'sql'       => "text NOT NULL",
+    'sql'       => "text NULL",
 );
 
 $GLOBALS['TL_DCA']['tl_news_archive']['fields']['rssimp_author'] = array(
