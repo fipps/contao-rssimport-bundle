@@ -171,14 +171,13 @@ $GLOBALS['TL_DCA']['tl_news_archive']['fields']['rssimp_allowedTags'] = array(
     'label'     => &$GLOBALS['TL_LANG']['tl_news_archive']['rssimp_allowedTags'],
     'exclude'   => true,
     'inputType' => 'text',
-    'default'   => &$GLOBALS['TL_CONFIG']['allowedTags'],
     'eval'      => array(
         'preserveTags' => true,
         'tl_class'     => 'clr',
         'mandatory'    => false,
         'tl_class'     => 'long',
     ),
-    'sql'       => "text NOT NULL",
+    'sql'       => "text NULL",
 );
 
 $GLOBALS['TL_DCA']['tl_news_archive']['fields']['rssimp_author'] = array(

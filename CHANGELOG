@@ -1,3 +1,6 @@
+v4.2.0
+- PHP8 compatibility
+
 v4.1.8/v4.1.9
 - Fix: <content:encoded> is not imported
 
